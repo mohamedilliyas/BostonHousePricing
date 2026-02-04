@@ -10,4 +10,8 @@
 Create a new environment
 ```
 conda create -p venv python==3.12.1 -y
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> 07a0193 (The web app ready)
