@@ -6,17 +6,21 @@ import pandas as pd
 app = Flask(__name__)
 #Load the model
 regmodel = pickle.load(open('regmodel.pkl', 'rb'))
-
+scalar = pickle.load(open('scaling.pkl','rb'))
 @app.route('/')
 def home():
     return render_template('home.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict_api', methods=['POST'])
 def predict_api():
     data = request.json['data']
     print(data)
-    data_df = pd.DataFrame(data)
-    print(data_df)
-    prediction = regmodel.predict(data_df)
-    print('Prediction is:', prediction)
-    return jsonify(prediction.tolist())
+    print(np.array(list(data.values())).reshape(1,-1))
+    new_data = scalar.transform(np.array(list(data.values())).reshape(1,-1))
+    regmodel.predict(new_data)
+    output = regmodel.predict(new_data)[0]
+    print(output)
+    return jsonify(output)
+
+if __name__ == "__main__":
+    app.run(debug=True)
